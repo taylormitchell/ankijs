@@ -1,0 +1,59 @@
+<script>
+  function evalElement(selector, ...args) {
+    const html = document.querySelector(selector).innerText.replace(/<br>/g, "\n").trim();
+    const code = new DOMParser().parseFromString(html, "text/html").documentElement.textContent;
+    try {
+      const fn = eval(code);
+      return fn(...args);
+    } catch (error) {
+      log(`Error evaluating code at "${selector}": ${error.message}`);
+    }
+  }
+  function render() {
+    window.sides = window.sides || evalElement("#render");
+    for (const side of ["front", "back"]) {
+      content = window.sides[side];
+      const el = document.getElementById(side);
+      if (!el || !content) {
+        continue;
+      } else if (content instanceof Node) {
+        el.appendChild(content);
+      } else if (typeof content === "string") {
+        el.innerHTML = content;
+      }
+    }
+  }
+  function log(...args) {
+    console.log(...args);
+    const content = document.querySelector(".modal .content");
+    const el = document.createElement("div");
+    el.innerHTML = args.join(" ");
+    content.appendChild(el);
+    openModal();
+  }
+  function openModal() {
+    const consoleDiv = document.querySelector(".modal-container");
+    consoleDiv.style.display = "flex";
+  }
+  function closeModal() {
+    const consoleDiv = document.querySelector(".modal-container");
+    const content = document.querySelector(".modal .content");
+    while (content.firstChild) {
+      content.removeChild(content.firstChild);
+    }
+    consoleDiv.style.display = "none";
+  }
+</script>
+<div id="render">{{render}}</div>
+<div class="card-content">
+  <div id="front" class="card"></div>
+  <script>
+    render();
+  </script>
+</div>
+<div class="modal-container">
+  <div class="modal">
+    <div class="content"></div>
+    <button onclick="closeModal()">Close</button>
+  </div>
+</div>
