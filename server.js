@@ -1,16 +1,15 @@
-/**
- * Express server
- */
-
 const fs = require("fs");
 const express = require("express");
-const card = require("./public/card");
 const app = express();
 const port = 3000;
 
+const onFront = fs.readFileSync("./public/Front.js", "utf-8");
+const onBack = fs.readFileSync("./public/Back.js", "utf-8");
+
 const frontSide = fs
   .readFileSync("./public/frontTemplate.html", "utf-8")
-  .replace("{{render}}", card.render);
+  .replace("{{Front}}", onFront)
+  .replace("{{Back}}", onBack);
 
 const backSide = fs
   .readFileSync("./public/backTemplate.html", "utf-8")
