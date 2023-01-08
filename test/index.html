@@ -1,0 +1,23 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./styling.css" />
+  </head>
+  <body>
+    <div id="frontSide">{{FrontSide}}</div>
+    <div id="backSide" style="display: none">{{BackSide}}</div>
+    <button id="btn">Show back</button>
+    <script>
+      const root = document.getElementById("root");
+      const backSide = document.getElementById("backSide");
+      function showBack() {
+        root.innerHTML = backSide.innerHTML;
+      }
+      const btn = document.getElementById("btn");
+      btn.addEventListener("click", showBack);
+    </script>
+  </body>
+</html>
