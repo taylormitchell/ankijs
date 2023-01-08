@@ -1,16 +1,23 @@
 <script>
-  function evalElement(selector) {
-    const html = document.querySelector(selector).innerText.replace(/<br>/g, "\n").trim();
+  function evalUserscript(side) {
+    if (side !== "front" && side !== "back") {
+      throw new Error(`Invalid side "${side}"`);
+    }
+    // Get script
+    const html = document
+      .querySelector(`.${side}.userscript`)
+      .innerText.replace(/<br>/g, "\n")
+      .trim();
     const code = new DOMParser().parseFromString(html, "text/html").documentElement.textContent;
+    // Evaluate
+    let content;
     try {
-      return eval(code);
+      content = eval(code);
     } catch (error) {
-      log(`Error evaluating code at "${selector}": ${error.message}`);
+      content = `Error evaluating ${side}: ${error.message + error.stack}`;
     }
-  }
-  const onFront = () => {
-    const content = evalElement("#onFront");
-    const el = document.getElementById("front");
+    // If the script returned content, add it to the DOM
+    const el = document.querySelector(`.${side}.side`);
     if (!el || !content) {
       return;
     } else if (content instanceof Node) {
@@ -18,49 +25,11 @@
     } else if (typeof content === "string") {
       el.innerHTML = content;
     }
-  };
-  const onBack = () => {
-    const content = evalElement("#onBack");
-    const el = document.getElementById("back");
-    if (!el || !content) {
-      return;
-    } else if (content instanceof Node) {
-      el.appendChild(content);
-    } else if (typeof content === "string") {
-      el.innerHTML = content;
-    }
-  };
-  function log(...args) {
-    console.log(...args);
-    const content = document.querySelector(".modal .content");
-    const el = document.createElement("div");
-    el.innerHTML = args.join(" ");
-    content.appendChild(el);
-    openModal();
-  }
-  function openModal() {
-    const consoleDiv = document.querySelector(".modal-container");
-    consoleDiv.style.display = "flex";
-  }
-  function closeModal() {
-    const consoleDiv = document.querySelector(".modal-container");
-    const content = document.querySelector(".modal .content");
-    while (content.firstChild) {
-      content.removeChild(content.firstChild);
-    }
-    consoleDiv.style.display = "none";
   }
 </script>
-<div id="onFront">{{Front}}</div>
-<div id="onBack">{{Back}}</div>
-<div class="modal-container">
-  <div class="modal">
-    <div class="content"></div>
-    <button onclick="closeModal()">Close</button>
-  </div>
-</div>
-<!-- Card stuff below here -->
-<div id="front" class="card"></div>
+<div class="front userscript">{{Front}}</div>
+<div class="back userscript">{{Back}}</div>
+<div class="front side"></div>
 <script>
-  onFront();
+  evalUserscript("front");
 </script>
