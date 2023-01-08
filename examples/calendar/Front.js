@@ -1,1 +1,1 @@
-"What day is it today?";
+What day is it today? (imagine a calendar with today's date highlighted)
