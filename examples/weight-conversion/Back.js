@@ -1,2 +1,2 @@
-const { lbs } = window.props;
+const [lbs] = useCardState("lbs");
 document.createTextNode(`${lbs} lbs`);

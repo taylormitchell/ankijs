@@ -30,35 +30,32 @@ app.get("/", (req, res) => {
 });
 
 app.get("/front", (req, res) => {
-  // Send user to back side and pass props
-  const before = `
-    <script>
-      const keys = Object.keys(window);
-      </script>
-    `;
+  // Add button to card which sends user to back side, passing all the
+  // variables created by the front side user script
+  const before = `<script>const keys = Object.keys(window);</script>`;
   const after = `
     <button id="btn">Show back</button>
     <script>
-      const data = {};
+      const vars = {};
       Object.entries(window).forEach(([key, value]) => {
         if (!keys.includes(key)) {
-          data[key] = value;
+          vars[key] = value;
         }
       });
       document.getElementById("btn").addEventListener("click", () => {
-        window.location.href = "/back?data=" + encodeURIComponent(JSON.stringify(data));
+        window.location.href = "/back?vars=" + encodeURIComponent(JSON.stringify(vars));
       });
     </script>
   `;
-  const page = cardTemplate.replace("{{Card}}", before + frontSide + after);
-  res.send(page);
+  const card = before + frontSide + after;
+  res.send(cardTemplate.replace("{{Card}}", card));
 });
 
 app.get("/back", (req, res) => {
-  // Render back side with props passed from front side
+  // Render back side with vars passed from the front side
   const script = `<script>
-    const data = JSON.parse(decodeURIComponent('${req.query.data}'));
-    Object.entries(data).forEach(([key, value]) => {
+    const vars = JSON.parse(decodeURIComponent('${req.query.vars}'));
+    Object.entries(vars).forEach(([key, value]) => {
       window[key] = value;
     });
     </script>`;

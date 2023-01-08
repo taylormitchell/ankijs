@@ -1,4 +1,11 @@
 <script>
+  window.cardState = window.cardState || {};
+  function useCardState(key, initialValue) {
+    if (!window.cardState[key]) {
+      window.cardState[key] = initialValue;
+    }
+    return [window.cardState[key], (newValue) => (window.cardState[key] = newValue)];
+  }
   function evalUserscript(side) {
     if (side !== "front" && side !== "back") {
       throw new Error(`Invalid side "${side}"`);
@@ -14,7 +21,14 @@
     try {
       content = eval(code);
     } catch (error) {
-      content = `Error evaluating ${side}: ${error.message + error.stack}`;
+      if (error instanceof SyntaxError) {
+        // If the userscript is invalid javascript, we assume it's just text
+        // and add it to the DOM as is
+        content = code;
+      } else {
+        // Otherwise, we display the error
+        content = `Error evaluating ${side}: ${error.message + error.stack}`;
+      }
     }
     // If the script returned content, add it to the DOM
     const el = document.querySelector(`.${side}.side`);
