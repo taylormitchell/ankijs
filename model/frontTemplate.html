@@ -10,17 +10,12 @@
     if (side !== "front" && side !== "back") {
       throw new Error(`Invalid side "${side}"`);
     }
-    // Get script
-    const html = document
-      .querySelector(`.${side}.userscript`)
-      .innerText.replace(/<br>/g, "\n")
-      .trim();
-    const code = new DOMParser()
-      .parseFromString(html, "text/html")
-      .documentElement.textContent.replace(/\/\/.*$/gm, ""); // remove comments
-    // Evaluate
-    let content;
+    let html, code, content;
     try {
+      // Get and evaluate user script
+      html = document.querySelector(`.${side}.userscript`).innerHTML.trim();
+      code = new DOMParser().parseFromString(html.replace(/<br>/g, "\n"), "text/html")
+        .documentElement.textContent;
       content = eval(code);
     } catch (error) {
       if (error instanceof SyntaxError) {

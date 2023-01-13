@@ -4,11 +4,29 @@ const path = require("path");
 const app = express();
 const port = 3000;
 
+function ankiStyleHtmlEncode(s) {
+  // replace all reserved characters with their html entity
+  const res = s.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;");
+  // replace leading spaces with &nbsp;
+  return res
+    .split("\n")
+    .map((line) => {
+      const n = line.match(/^ */)[0].length;
+      if (n > 1) {
+        return "&nbsp;".repeat(n - 1) + line.slice(n - 1);
+      }
+      return line;
+    })
+    .join("<br>");
+}
+
 const card = process.argv[2] || "examples/weight-conversion";
 
 // Read front and back user scripts
-const Front = fs.readFileSync(path.join(card, "Front.js"), "utf-8");
-const Back = fs.readFileSync(path.join(card, "Back.js"), "utf-8");
+const FrontScript = fs.readFileSync(path.join(card, "Front.js"), "utf-8");
+const BackScript = fs.readFileSync(path.join(card, "Back.js"), "utf-8");
+const Front = ankiStyleHtmlEncode(FrontScript);
+const Back = ankiStyleHtmlEncode(BackScript);
 
 // Prepare front and back sides
 const frontSide = fs

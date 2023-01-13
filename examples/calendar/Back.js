@@ -4,6 +4,7 @@ let currentYear = today.getFullYear();
 let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 let monthAndYear = document.getElementById("monthAndYear");
 
+// showCalendar(currentMonth, currentYear);
 function getCalendar(month, year) {
   let firstDay = new Date(year, month).getDay();
 
