@@ -6,6 +6,14 @@
     }
     return [window.cardState[key], (newValue) => (window.cardState[key] = newValue)];
   }
+  function get(key, initial) {
+    window.cardState[key] = window.cardState[key] || initial;
+    return window.cardState[key];
+  }
+  function set(key, value) {
+    window.cardState[key] = value;
+    return window.cardState[key];
+  }
   const random = {
     shuffle: (array) => {
       // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
