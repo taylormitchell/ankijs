@@ -4,7 +4,8 @@
   "description": "",
   "main": "anki-dev-env.js",
   "scripts": {
-    "start": "node test/server.js"
+    "start": "node test/server.js",
+    "update-readme": "node scripts/update-readme.js"
   },
   "author": "",
   "license": "ISC",

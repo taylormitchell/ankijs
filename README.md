@@ -5,11 +5,7 @@ An Anki note type which allows you to write your cards in JavaScript.
 ## Create the note type
 
 1. Create a new note type by cloning the Basic note type.
-2. Add the following to the template:
-
-- Front Template: [model/frontTemplate.html](model/frontTemplate.html)
-- Back Template: [model/backTemplate.html](model/backTemplate.html)
-- Styling: [model/style.css](model/style.css)
+2. Fill in it's card template with the [front template](#front-template), [back template](#back-template), and [styling](#styling) below.
 
 ## Create a card
 
@@ -48,4 +44,107 @@ Back
 
 ```
 `${get("lbs")} lbs`;
+```
+
+## Model
+
+### Front Template
+
+```html
+<script>
+  window.cardState = window.cardState || {};
+  function get(key, initial) {
+    window.cardState[key] = window.cardState[key] || initial;
+    return window.cardState[key];
+  }
+  function set(key, value) {
+    window.cardState[key] = value;
+    return window.cardState[key];
+  }
+  const random = {
+    shuffle: (array) => {
+      let currentIndex = array.length,
+        randomIndex;
+
+      // While there remain elements to shuffle.
+      while (currentIndex != 0) {
+        // Pick a remaining element.
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+
+        // And swap it with the current element.
+        [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+      }
+
+      return array;
+    },
+    choice: (array) => array[Math.floor(Math.random() * array.length)],
+  };
+  function evalUserscript(side) {
+    if (side !== "front" && side !== "back") {
+      throw new Error(`Invalid side "${side}"`);
+    }
+    let html, code, content;
+    try {
+      // Get and evaluate user script
+      html = document.querySelector(`.${side}.userscript`).innerHTML.trim();
+      code = new DOMParser().parseFromString(html.replace(/<br>/g, "\n"), "text/html")
+        .documentElement.textContent;
+      content = eval(code);
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        // If the userscript is invalid javascript, we assume it's just text
+        // and add it to the DOM as is
+        content = code;
+      } else {
+        // Otherwise, we display the error
+        content = `Error evaluating ${side}: ${error.message + error.stack}`;
+      }
+    }
+    // If the script returned content, add it to the DOM
+    const el = document.querySelector(`.${side}.side`);
+    if (!el || !content) {
+      return;
+    } else if (content instanceof Node) {
+      el.appendChild(content);
+    } else if (typeof content === "string") {
+      el.innerHTML = content;
+    }
+  }
+</script>
+<div class="front userscript">{{Front}}</div>
+<div class="back userscript">{{Back}}</div>
+<div class="front side"></div>
+<script>
+  evalUserscript("front");
+</script>
+```
+
+### Back Template
+
+```html
+{{FrontSide}}
+
+<hr id="answer" />
+
+<div class="back side"></div>
+<script>
+  evalUserscript("back");
+</script>
+```
+
+### Styling
+
+```css
+.card {
+  font-family: arial;
+  font-size: 20px;
+  text-align: center;
+  color: black;
+  background-color: white;
+}
+
+.userscript {
+  display: none;
+}
 ```
