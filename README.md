@@ -34,16 +34,34 @@ Example 2
 Front
 
 ```
-const kgToLbs = 2.20462;
 const kg = get("kg", Math.ceil(Math.random() * 100));
-set("lbs", Math.floor(kg * kgToLbs));
 `What is ${kg} kg in lbs?`;
 ```
 
 Back
 
 ```
-`${get("lbs")} lbs`;
+const kgToLbs = 2.20462;
+const kg = get("kg");
+const lbs = Math.floor(kg * kgToLbs);
+`${lbs} lbs`;
+```
+
+I notice with some cards, I'm just pattern matching based on e.g. the word order. This was a main motivation for this note type: to be able to randomize the prompt on the front of the card. The `random` object is included to help define cards like these. It has two methods: `shuffle` and `choice`. `shuffle` takes an array and returns a new array with the elements in a random order. `choice` takes an array and returns a random element from the array.
+
+Example 3
+
+Front
+
+```
+const [city1, city2] = get("cities", random.shuffle(["Toronto", "Vancouver"]));
+`Which has a larger population? ${city1} or ${city2}?`
+```
+
+Back
+
+```
+Toronto
 ```
 
 ## Model
