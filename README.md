@@ -11,17 +11,11 @@ An Anki note type which allows you to write your cards in JavaScript.
 
 The front and back fields can either be text or Javascript. If it's text, the text will be displayed as is. If it's javascript, the script is evaluated and if the result is a value, it will be used as the field value.
 
-Example 1
-
-Front
-
 ```
+Front:
 What's today's date?
-```
 
-Back
-
-```
+Back:
 new Date().toLocaleDateString()
 ```
 
@@ -29,18 +23,12 @@ A big gotcha to keep in mind is that the script on the front side is run twice. 
 
 To get around this, the note type includes a `get` and `set` function (defined [here](model/frontTemplate.html)). The `get` function takes a key and an optional default value. If the key doesn't exist, the default value is saved and returned. If the key exists, the saved value is returned. So if you use `get` in your front script, it will set a value when the front side is shown and then retrieve it when the back side is shown.
 
-Example 2
-
-Front
-
 ```
+Front:
 const kg = get("kg", Math.ceil(Math.random() * 100));
 `What is ${kg} kg in lbs?`;
-```
 
-Back
-
-```
+Back:
 const kgToLbs = 2.20462;
 const kg = get("kg");
 const lbs = Math.floor(kg * kgToLbs);
@@ -49,18 +37,12 @@ const lbs = Math.floor(kg * kgToLbs);
 
 I notice with some cards, I'm just pattern matching based on e.g. the word order. This was a main motivation for this note type: to be able to randomize the prompt on the front of the card. The `random` object is included to help define cards like these. It has two methods: `shuffle` and `choice`. `shuffle` takes an array and returns a new array with the elements in a random order. `choice` takes an array and returns a random element from the array.
 
-Example 3
-
-Front
-
 ```
+Front:
 const [city1, city2] = get("cities", random.shuffle(["Toronto", "Vancouver"]));
 `Which has a larger population? ${city1} or ${city2}?`
-```
 
-Back
-
-```
+Back:
 Toronto
 ```
 
