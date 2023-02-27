@@ -27,7 +27,7 @@ new Date().toLocaleDateString()
 
 A big gotcha to keep in mind is that the script on the front side is run twice. Once when the front side is shown and once when the back side is shown. So if you have a script that generates a random number, the number will be different on the front and back side.
 
-To get around this, the note type includes a `get` and `set` function (defined [here](model/frontTemplate.html)). The `get` function takes a key and an optional default value. If the key doesn't exist, the default value is saved and returned. If the key exists, the saved value is returned. So if you can use `get` in your front script, it will set a value when the front side is shown and then retrieve it when the back side is shown.
+To get around this, the note type includes a `get` and `set` function (defined [here](model/frontTemplate.html)). The `get` function takes a key and an optional default value. If the key doesn't exist, the default value is saved and returned. If the key exists, the saved value is returned. So if you use `get` in your front script, it will set a value when the front side is shown and then retrieve it when the back side is shown.
 
 Example 2
 
