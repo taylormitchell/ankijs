@@ -8,24 +8,36 @@
     window.cardState[key] = value;
     return window.cardState[key];
   }
-  const random = {
-    shuffle: (array) => {
-      let currentIndex = array.length,
-        randomIndex;
-
-      // While there remain elements to shuffle.
-      while (currentIndex != 0) {
-        // Pick a remaining element.
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex--;
-
-        // And swap it with the current element.
-        [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
-      }
-
-      return array;
-    },
-    choice: (array) => array[Math.floor(Math.random() * array.length)],
+  // random([lower=0], [upper=1], [floating])
+  const random = (...args) => {
+    let lower;
+    let upper;
+    let floating;
+    if (typeof args[0] === "boolean") {
+      lower = 0;
+      upper = 1;
+      floating = args[0];
+    } else if (typeof args[1] === "boolean") {
+      lower = args[0];
+      upper = 1;
+      floating = args[1];
+    } else {
+      lower = args[0] || 0;
+      upper = args[1] || 1;
+      floating = args[2] || false;
+    }
+    if (floating) {
+      return Math.random() * (upper - lower) + lower;
+    } else {
+      return Math.floor(Math.random() * (upper - lower + 1)) + lower;
+    }
+  };
+  const times = (count, fn) => {
+    const result = [];
+    for (let i = 0; i < count; i++) {
+      result.push(fn(i));
+    }
+    return result;
   };
   function evalUserscript(side) {
     if (side !== "front" && side !== "back") {
