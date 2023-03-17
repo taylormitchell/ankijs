@@ -1,4 +1,4 @@
-const fs = require("fs");
+import fs from "fs";
 const readme = fs.readFileSync("README.md", "utf8");
 const frontTemplate = fs.readFileSync("model/frontTemplate.html", "utf8");
 const backTemplate = fs.readFileSync("model/backTemplate.html", "utf8");
