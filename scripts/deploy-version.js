@@ -40,7 +40,7 @@ await fetch("http://localhost:8765", {
     params: {
       modelName,
       css,
-      inOrderFields: ["Front", "Back"],
+      inOrderFields: ["Front", "Back", "Extra"],
       isCloze: false,
       cardTemplates: [
         {
