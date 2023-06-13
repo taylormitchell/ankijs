@@ -1,7 +1,8 @@
 <script>
   window.cardState = window.cardState || {};
   function get(key, initial) {
-    window.cardState[key] = window.cardState[key] || initial;
+    const v = window.cardState[key];
+    window.cardState[key] = v === undefined ? initial : v;
     return window.cardState[key];
   }
   function set(key, value) {
