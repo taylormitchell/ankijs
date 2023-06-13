@@ -1,1 +1,1 @@
-"A, B, C";
+`${get("displayVals").join(", ")}`;
