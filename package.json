@@ -5,8 +5,9 @@
   "type": "module",
   "main": "anki-dev-env.js",
   "scripts": {
-    "start": "node test/server.js",
+    "start": "nodemon test/server.js",
     "update-readme": "node scripts/update-readme.js",
+    "deploy:dev": "node scripts/deploy-dev.js",
     "deploy:version": "node scripts/deploy-version.js"
   },
   "author": "",
@@ -16,6 +17,6 @@
   },
   "devDependencies": {
     "node-fetch": "^3.3.1",
-    "nodemon": "^2.0.20"
+    "nodemon": "^2.0.22"
   }
 }
