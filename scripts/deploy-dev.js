@@ -2,6 +2,7 @@ import fetch from "node-fetch";
 import fs from "fs";
 
 const modelName = "BasicJS.dev";
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const front = fs.readFileSync("model/frontTemplate.html", "utf8");
 const back = fs.readFileSync("model/backTemplate.html", "utf8");
@@ -32,6 +33,8 @@ await fetch("http://localhost:8765", {
       process.exit(1);
     }
   });
+
+await wait(1000);
 
 await fetch("http://localhost:8765", {
   method: "POST",
