@@ -33,7 +33,12 @@
       return Math.floor(Math.random() * (upper - lower + 1)) + lower;
     }
   };
-  const shuffle = (array) => {
+  /**
+   * Shuffle array in place.
+   *
+   * It's named shuf to avoid conflicts with other shuffle functions.
+   */
+  const shuf = (array) => {
     let currentIndex = array.length,
       randomIndex;
 
