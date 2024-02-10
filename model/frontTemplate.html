@@ -1,5 +1,5 @@
 <script>
-  window.cardState = window.cardState || {};
+  window.cardState = {};
   function get(key, initial) {
     const v = window.cardState[key];
     window.cardState[key] = v === undefined ? initial : v;
@@ -10,7 +10,7 @@
     return window.cardState[key];
   }
   // random([lower=0], [upper=1], [floating])
-  const random = (...args) => {
+  function random(...args) {
     let lower;
     let upper;
     let floating;
@@ -32,13 +32,13 @@
     } else {
       return Math.floor(Math.random() * (upper - lower + 1)) + lower;
     }
-  };
+  }
   /**
    * Shuffle array in place.
    *
    * It's named shuf to avoid conflicts with other shuffle functions.
    */
-  const shuf = (array) => {
+  function shuf(array) {
     let currentIndex = array.length,
       randomIndex;
 
@@ -53,14 +53,14 @@
     }
 
     return array;
-  };
-  const times = (count, fn) => {
+  }
+  function times(count, fn) {
     const result = [];
     for (let i = 0; i < count; i++) {
       result.push(fn(i));
     }
     return result;
-  };
+  }
   function evalUserscript(side) {
     console.log(`Starting evalUserscript for ${side}`);
     if (side !== "front" && side !== "back") {
@@ -109,5 +109,6 @@
 <div class="back userscript">{{Back}}</div>
 <div class="front side"></div>
 <script>
+  window.cardState = {};
   evalUserscript("front");
 </script>
