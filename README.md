@@ -70,7 +70,15 @@ Toronto
 
 ```html
 <script>
-  window.cardState = window.cardState || {};
+  // Set up card state on front side, and keep it for the back side.
+  function initState() {
+    window.cardState = window.cardState || {};
+  }
+  // Clear the card state after the back side is rendered. This is necessary
+  // because Anki will reuse the same card state for the next card.
+  function clearState() {
+    delete window.cardState;
+  }
   function get(key, initial) {
     const v = window.cardState[key];
     window.cardState[key] = v === undefined ? initial : v;
@@ -81,7 +89,7 @@ Toronto
     return window.cardState[key];
   }
   // random([lower=0], [upper=1], [floating])
-  const random = (...args) => {
+  function random(...args) {
     let lower;
     let upper;
     let floating;
@@ -103,8 +111,13 @@ Toronto
     } else {
       return Math.floor(Math.random() * (upper - lower + 1)) + lower;
     }
-  };
-  const shuffle = (array) => {
+  }
+  /**
+   * Shuffle array in place.
+   *
+   * It's named shuf to avoid conflicts with other shuffle functions.
+   */
+  function shuf(array) {
     let currentIndex = array.length,
       randomIndex;
 
@@ -119,84 +132,63 @@ Toronto
     }
 
     return array;
-  };
-  const times = (count, fn) => {
+  }
+  function times(count, fn) {
     const result = [];
     for (let i = 0; i < count; i++) {
       result.push(fn(i));
     }
     return result;
-  };
+  }
   function evalUserscript(side) {
-    log(`Starting evalUserscript for ${side}`);
+    console.log(`Starting evalUserscript for ${side}`);
     if (side !== "front" && side !== "back") {
       throw new Error(`Invalid side "${side}"`);
     }
     let html, code, content;
     try {
-      log("Get and evaluate user script");
+      console.log("Get and evaluate user script");
       html = document.querySelector(`.${side}.userscript`).innerHTML.trim();
       code = new DOMParser().parseFromString(html.replace(/<br>/g, "\n"), "text/html")
         .documentElement.textContent;
-      log("Parsed code:", code);
+      console.log("Parsed code:", code);
       content = eval(code);
-      log("Evaluated content:", content);
+      console.log("Evaluated content:", content);
     } catch (error) {
       if (error instanceof SyntaxError) {
         // If the userscript is invalid javascript, we assume it's just text
         // and add it to the DOM as is
-        log("Invalid script, adding as text");
+        console.log("Invalid script, adding as text");
         content = code;
       } else {
         // Otherwise, we display the error
-        log(`Error evaluating script: ${error.message + error.stack}`);
-        document.querySelector(".logs").style.display = "block";
+        console.error(`Error evaluating script: ${error.message + error.stack}`);
         return;
       }
     }
     // If the script returned content, add it to the DOM
     const el = document.querySelector(`.${side}.side`);
     if (!el || !content) {
-      log("No element or content, returning");
+      console.log("No element or content, returning");
       return;
     } else if (content instanceof Node) {
-      log("Content is a node, appending");
+      console.log("Content is a node, appending");
       el.appendChild(content);
     } else if (typeof content === "string") {
-      log("Content is a string, setting innerHTML");
+      console.log("Content is a string, setting innerHTML");
       el.innerHTML = content;
     } else {
-      log("Content is not a node or string, returning");
+      console.log("Content is not a node or string, returning");
       return;
     }
-    log("Finished evalUserscript");
-  }
-  function log(...args) {
-    const el = document.querySelector(".logs");
-    if (!el) {
-      return;
-    }
-    const div = document.createElement("div");
-    const prefix = document.createElement("span");
-    prefix.classList.add("prefix");
-    prefix.textContent = "> ";
-    div.appendChild(prefix);
-    const message = document.createElement("span");
-    message.classList.add("message");
-    message.textContent = args
-      .map((v) => (typeof v === "string" ? v : JSON.stringify(v)))
-      .join(" ");
-    div.appendChild(message);
-    el.appendChild(div);
+    console.log("Finished evalUserscript");
   }
 </script>
 <div class="front userscript">{{Front}}</div>
 <div class="back userscript">{{Back}}</div>
 <div class="front side"></div>
-<div class="logs">
-  <div>Logs:</div>
-</div>
 <script>
+  initState();
   evalUserscript("front");
 </script>
 ```
@@ -212,6 +204,7 @@ Toronto
 <div class="extra">{{Extra}}</div>
 <script>
   evalUserscript("back");
+  clearState();
 </script>
 ```
 
