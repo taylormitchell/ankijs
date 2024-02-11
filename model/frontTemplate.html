@@ -1,5 +1,13 @@
 <script>
-  window.cardState = {};
+  // Set up card state on front side, and keep it for the back side.
+  function initState() {
+    window.cardState = window.cardState || {};
+  }
+  // Clear the card state after the back side is rendered. This is necessary
+  // because Anki will reuse the same card state for the next card.
+  function clearState() {
+    delete window.cardState;
+  }
   function get(key, initial) {
     const v = window.cardState[key];
     window.cardState[key] = v === undefined ? initial : v;
@@ -109,6 +117,6 @@
 <div class="back userscript">{{Back}}</div>
 <div class="front side"></div>
 <script>
-  window.cardState = {};
+  initState();
   evalUserscript("front");
 </script>
